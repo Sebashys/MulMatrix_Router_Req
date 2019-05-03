@@ -37,14 +37,15 @@ client.bind("tcp://*:5671")
 for _ in range(NBR_WORKERS*3):
     
     mensaje_json = json.dumps(matriz_prueba)
-    print(mensaje_json)
+    #print(mensaje_json)
     address, empty, ready = client.recv_multipart()
-
+    print(ready.decode())
     client.send_multipart([
         address,
         b'',
         mensaje_json.encode(),
     ])
+
 
 # Now ask mama to shut down and report their results
 for _ in range(NBR_WORKERS):

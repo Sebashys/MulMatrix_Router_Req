@@ -1,8 +1,11 @@
 import time
 import random
+import zmq
+import sys
 import json
 import numpy
-import zmq
+import itertools
+from collections import namedtuple
 
 import zhelpers
 
@@ -24,16 +27,22 @@ NBR_WORKERS = 2
 
 context = zmq.Context.instance()
 worker = context.socket(zmq.REQ)
-
+matrizR = None
 # We use a string identity for ease here
 zhelpers.set_id(worker)
 worker.connect("tcp://localhost:5671")
-matrizR = []
+
 total = 0
 
 while True:
     # Tell the router we're ready for work
-    worker.send(b"ready")
+    if total == 0:
+        worker.send(b"ready")
+    else :
+        matriz_json = matrizR.tolist()
+        matriz_json = json.dumps(matriz_json)
+        print(matrizR)
+        worker.send(matriz_json.encode())
 
     # Get workload from router, until finished
     workload = worker.recv()
@@ -47,8 +56,9 @@ while True:
     
     else:
         print("Processed: %d tasks" % total)
-        print(matrizR)
         break
+        
+        
     total += 1
 
     
