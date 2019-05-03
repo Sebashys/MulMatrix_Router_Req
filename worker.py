@@ -45,14 +45,16 @@ while True:
         worker.send(matriz_json.encode())
 
     # Get workload from router, until finished
-    workload = worker.recv()
-    workload = workload.decode()
-    workload = json.loads(workload)
+    workload1, workload2 = worker.recv_multipart()
+    workload1 = workload1.decode()
+    workload2 = workload2.decode()
+    workload1 = json.loads(workload1)
+    workload2 = json.loads(workload2)
     #print(type(workload))
-    finished = workload == b"END"
+    finished = workload1 == b"END"
     
-    if (type(workload) == list):
-        matrizR= multiplicar(workload,workload)
+    if (type(workload2) == list):
+        matrizR= multiplicar(workload1,workload2)
     
     else:
         print("Processed: %d tasks" % total)
